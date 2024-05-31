@@ -46,12 +46,13 @@ class Trainer:
         for epoch in range(self.n_epochs):
             print(f"Starting epoch {epoch}:")
             pbar = tqdm(data_loader)
-            for i, (images) in enumerate(pbar):
-                
+            for i, (images, labels) in enumerate(pbar):
+                #print(images)
                 images = images.to(self.device)
+                labels = labels.to(self.device)
                 t = self.diffusion.sample_timesteps(images.shape[0]).to(self.device)
                 x_t, noise = self.diffusion.noise_images(images, t)
-                predicted_noise = self.model(x_t, t)
+                predicted_noise = self.model(x_t, t, labels)
                 loss = mse(noise, predicted_noise)
 
                 optimizer.zero_grad()
@@ -60,11 +61,11 @@ class Trainer:
                 scheduler.step()
 
             if epoch % self.plot_freq == 0: 
-                sampled_images = self.diffusion.sample(self.model, n=images.shape[0])
-                self.diffusion.save_images(sampled_images, os.path.join("plots", f"{epoch}.jpg"))
-                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"ckpt_model2.pt"))
+                sampled_images = self.diffusion.sample_conditional(self.model, n=images.shape[0], labels=labels)
+                self.diffusion.save_images(sampled_images, os.path.join("plots", f"conditional_{epoch}.jpg"))
+                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"conditional_ckpt_model2.pt"))
 
-            if epoch % self.eval_freq == 0:
-                FID_Score = self.diffusion.cal_fid(self.model, data_loader, self.device)
-                print("FID score: ", FID_Score)
+            # if epoch % self.eval_freq == 0:
+            #     FID_Score = self.diffusion.cal_fid(self.model, data_loader, self.device)
+            #     print("FID score: ", FID_Score)
 

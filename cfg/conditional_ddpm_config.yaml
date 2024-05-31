@@ -2,7 +2,7 @@ default : &DEFAULT
 
   # General
   verbose: True 
-  device: 'cuda:2' 
+  device: 'cpu' 
   
 
   # Diffusion
@@ -35,13 +35,13 @@ default : &DEFAULT
 
   # Dataset related
   data:
-    folder: '../Data/Model_II/cdm'
-    batch_size: 256
+    folder: '../Data/Model_II/'
+    batch_size: 32
     image_size:  64
     train_test_splt: 0.9
     plot_freq: 10
     eval_freq: 100
     shuffle: True
-    num_classes: None
+    num_classes: 3
 
   
