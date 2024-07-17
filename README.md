@@ -7,7 +7,8 @@ Description : Strong gravitational lensing is a promising probe of the substruct
 Traditional simulations of gravitational lensing are time-consuming and require extensive computational resources. This project proposes the use of diffusion models, a class of generative models known for their ability to produce high-quality, detailed images from a distribution of noise, to simulate strong gravitational lensing images. We aim to generate realistic simulations of gravitational lensing events that can be used to augment datasets for machine learning models and facilitate the development of better domain adaptation and self-supervised models aimed at bridging the gap between simulated and real images of gravitational lensing. Furthermore, we will also investigate leveraging conditional diffusion models to generate gravitational lensing simulations by conditioning the model on specific parameters related to the lensing events, such as the mass distribution of the lensing galaxy, orientation, and the redshift of both the source and the lens.
 
 # Project Structure
-
+<pre>
+```
 -- cfg      
    |--- ddpm_config.yaml <- configuration file for DDPM   
     |--- ae_md_cond_ddpm_config.yaml <- configuration file for using Autoencoder and DDPM   
@@ -53,5 +54,7 @@ Traditional simulations of gravitational lensing are time-consuming and require 
     |--- test.py <-   
     |--- plot_all <- plotting script  
     |--- plot_ae_ddpm <- plotting script when using autoencoder and ddpm  
+```
+</pre>
 
 
