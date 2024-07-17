@@ -1,16 +1,12 @@
-import sys
 import torch
+import torch.nn as nn
 
-from torch import nn
-from torch.utils.data import DataLoader 
-
+from torchvision import models
+from torch.utils.data import DataLoader, Subset
+from sklearn.model_selection import train_test_split
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_model_2 import CustomDataset_Conditional
-from models.unet_sa import UNet_linear_conditional
-from train.train_conditional_ddpm import Trainer
-
-# Set seed for PyTorch
-torch.manual_seed(42)
+from dataset.preprocessing_all_model2 import CustomDataset, CustomDataset_v1
+from train.train_resnet import Trainer
 
 
 # Read the configuration
@@ -25,16 +21,23 @@ pipe = ConfigPipeline(
     ]
 )
 config = pipe.read_conf()
-#pipe.log()
-#print(config.unet.input_channels)
 
 # Load the Dataset
-dataset = CustomDataset_Conditional(folder_path=config.data.folder)
-data_loader = DataLoader(dataset=dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
+dataset = CustomDataset_v1(root_dir=config.data.folder, config= config)#, max_samples=config.data.max_samples, config=config)
+train_size = config.data.train_test_split
+indices = list(range(len(dataset)))
+train_indices, test_indices = train_test_split(indices, train_size=train_size, random_state=42)
+train_dataset = Subset(dataset, train_indices)
+test_dataset = Subset(dataset, test_indices)
+train_data_loader = DataLoader(dataset=train_dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
+test_data_loader = DataLoader(dataset=test_dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
 
-# Load model
-model = UNet_linear_conditional(config)
-model = model.to(device=config.device)
+# Model 
+model = models.resnet18(pretrained=False)
+model.conv1 = torch.nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+num_ftrs = model.fc.in_features
+model.fc = nn.Sequential(nn.Dropout(0.5), nn.Linear(num_ftrs, 1))
+model.to(config.device)
 
 # Create Optimizer
 optimizer = torch.optim.AdamW(
@@ -47,7 +50,7 @@ if config.opt.scheduler == "OneCycleLR":
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr = config.opt.lr,
-        steps_per_epoch = len(data_loader),
+        steps_per_epoch = len(train_data_loader),
         epochs = config.opt.epochs,
     ) 
 elif config.opt.scheduler == "ReduceLROnPlateau":
@@ -83,4 +86,4 @@ if config.verbose:
 
 
 # Train
-trainer.train(data_loader=data_loader, mse=mse, optimizer=optimizer, scheduler=scheduler)
+trainer.train(train_data_loader=train_data_loader, test_data_loader=test_data_loader, mse=mse, optimizer=optimizer, scheduler=scheduler)

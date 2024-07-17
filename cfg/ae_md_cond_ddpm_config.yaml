@@ -12,6 +12,12 @@ default : &DEFAULT
     beta_end:    0.02
 
   # Model
+
+  ae:
+    input_dim: 1
+    hidden_dim: 8
+    latent_dim: 128
+
   unet:
     input_channels: 1
     output_channels: 1
@@ -27,7 +33,7 @@ default : &DEFAULT
 
     scheduler_T_max: 500 # For cosine only, typically take n_epochs
     scheduler_patience: 100 # For ReduceLROnPlateau only
-    scheduler: 'ReduceLROnPlateau' #'OneCycleLR' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
+    scheduler: 'OneCycleLR' # Or 'CosineAnnealingLR' OR 'ReduceLROnPlateau'
     step_size: 60
     gamma: 0.5
     precision_schedule: None
@@ -35,7 +41,8 @@ default : &DEFAULT
 
   # Dataset related
   data:
-    folder: '../Data/cdm_regress_multi_param_model_ii/cdm_regress_multi_param/'
+    folder: '../Data/Model_II/axion'
+    max_samples: 10000
     batch_size: 32
     image_size:  64
     train_test_split: 0.9
@@ -43,7 +50,7 @@ default : &DEFAULT
     eval_freq: 100
     shuffle: True
     num_classes: 3
-    max: 2.099825382232666
-    min: -1.6998486518859863
+    max_value: -50.65694808959961
+    min_value: -55.26202392578125
 
   

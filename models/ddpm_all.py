@@ -52,13 +52,13 @@ class Diffusion:
         model.train()
         return x
 
-    def sample_conditional(self, model, n, labels, cfg_scale=0):
+    def sample_conditional(self, model, n, v1, v2, v3, v4, cfg_scale=0):
         model.eval()
         with torch.no_grad():
             x = torch.randn((n, 1, self.img_size, self.img_size)).to(self.device)
             for i in tqdm(reversed(range(1, self.noise_steps)), position=0):
                 t = (torch.ones(n) * i).long().to(self.device)
-                predicted_noise = model(x, t, labels)
+                predicted_noise = model(x, t, v1, v2, v3, v4)
                 if cfg_scale > 0:
                     uncond_predicted_noise = model(x, t, None)
                     predicted_noise = torch.lerp(uncond_predicted_noise, predicted_noise, cfg_scale)
@@ -72,27 +72,6 @@ class Diffusion:
                 x = 1 / torch.sqrt(alpha) * (x - ((1 - alpha) / (torch.sqrt(1 - alpha_hat))) * predicted_noise) + torch.sqrt(beta) * noise
         model.train()
         return x
-
-    # def sample_ae_conditional(self, model, model_ae, n, labels, cfg_scale=3):
-    #     model.eval()
-    #     with torch.no_grad():
-    #         x = torch.randn((n, 1, self.img_size, self.img_size)).to(self.device)
-    #         for i in tqdm(reversed(range(1, self.noise_steps)), position=0):
-    #             t = (torch.ones(n) * i).long().to(self.device)
-    #             predicted_noise = model(x, t, labels)
-    #             if cfg_scale > 0:
-    #                 uncond_predicted_noise = model(x, t, None)
-    #                 predicted_noise = torch.lerp(uncond_predicted_noise, predicted_noise, cfg_scale)
-    #             alpha = self.alpha[t][:, None, None, None]
-    #             alpha_hat = self.alpha_hat[t][:, None, None, None]
-    #             beta = self.beta[t][:, None, None, None]
-    #             if i > 1:
-    #                 noise = torch.randn_like(x)
-    #             else:
-    #                 noise = torch.zeros_like(x)
-    #             x = 1 / torch.sqrt(alpha) * (x - ((1 - alpha) / (torch.sqrt(1 - alpha_hat))) * predicted_noise) + torch.sqrt(beta) * noise
-    #     model.train()
-    #     return x
 
     def cal_fid(self, model, train_dl, device):
         fid = FrechetInceptionDistance(feature=2048, reset_real_features = False, normalize = True).to(device)

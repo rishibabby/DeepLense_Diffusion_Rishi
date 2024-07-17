@@ -5,9 +5,9 @@ from torch import nn
 from torch.utils.data import DataLoader 
 
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_model_2 import CustomDataset_Conditional
-from models.unet_sa import UNet_linear_conditional
-from train.train_conditional_ddpm import Trainer
+from dataset.preprocessing_all_model2 import CustomDataset
+from models.unet_all import UNet_all_conditional
+from train.train_all import Trainer
 
 # Set seed for PyTorch
 torch.manual_seed(42)
@@ -29,11 +29,11 @@ config = pipe.read_conf()
 #print(config.unet.input_channels)
 
 # Load the Dataset
-dataset = CustomDataset_Conditional(folder_path=config.data.folder)
+dataset = CustomDataset(root_dir=config.data.folder)
 data_loader = DataLoader(dataset=dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
 
 # Load model
-model = UNet_linear_conditional(config)
+model = UNet_all_conditional(config)
 model = model.to(device=config.device)
 
 # Create Optimizer

@@ -1,40 +1,43 @@
-import sys
 import torch
+import torch.nn as nn
 
-from torch import nn
-from torch.utils.data import DataLoader 
-
+from torch.utils.data import DataLoader, Subset
+from sklearn.model_selection import train_test_split
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_model_2 import CustomDataset_Conditional
-from models.unet_sa import UNet_linear_conditional
-from train.train_conditional_ddpm import Trainer
+from dataset.preprocessing_md_model2 import NumbersDataset
+from models.autoencoder import Autoencoder
+from train.train_ae import Trainer
+
 
 # Set seed for PyTorch
 torch.manual_seed(42)
-
 
 # Read the configuration
 config_name = "default"
 pipe = ConfigPipeline(
     [
         YamlConfig(
-            "./conditional_ddpm_config.yaml", config_name='default', config_folder='cfg/'
+            "./ae_md_config.yaml", config_name='default', config_folder='cfg/'
         ),
         ArgparseConfig(infer_types=True, config_name=None, config_file=None),
         YamlConfig(config_folder='cfg/')
     ]
 )
 config = pipe.read_conf()
-#pipe.log()
-#print(config.unet.input_channels)
 
 # Load the Dataset
-dataset = CustomDataset_Conditional(folder_path=config.data.folder)
-data_loader = DataLoader(dataset=dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
+dataset = NumbersDataset(main_folder_path=config.data.folder)
+train_size = config.data.train_test_split
+indices = list(range(len(dataset)))
+train_indices, test_indices = train_test_split(indices, train_size=train_size, random_state=42)
+train_dataset = Subset(dataset, train_indices)
+test_dataset = Subset(dataset, test_indices)
+train_data_loader = DataLoader(dataset=train_dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
+test_data_loader = DataLoader(dataset=test_dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
 
-# Load model
-model = UNet_linear_conditional(config)
-model = model.to(device=config.device)
+# Load Model
+model = Autoencoder(latent_dim = config.ae.latent_dim, hidden_dim = config.ae.hidden_dim, input_dim =config.ae.input_dim)
+model = model.to(config.device)
 
 # Create Optimizer
 optimizer = torch.optim.AdamW(
@@ -47,7 +50,7 @@ if config.opt.scheduler == "OneCycleLR":
     scheduler = torch.optim.lr_scheduler.OneCycleLR(
         optimizer,
         max_lr = config.opt.lr,
-        steps_per_epoch = len(data_loader),
+        steps_per_epoch = len(train_data_loader),
         epochs = config.opt.epochs,
     ) 
 elif config.opt.scheduler == "ReduceLROnPlateau":
@@ -83,4 +86,4 @@ if config.verbose:
 
 
 # Train
-trainer.train(data_loader=data_loader, mse=mse, optimizer=optimizer, scheduler=scheduler)
+trainer.train(train_data_loader=train_data_loader, test_data_loader=test_data_loader, mse=mse, optimizer=optimizer, scheduler=scheduler)

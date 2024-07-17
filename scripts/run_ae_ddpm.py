@@ -5,9 +5,10 @@ from torch import nn
 from torch.utils.data import DataLoader 
 
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_model_2 import CustomDataset_Conditional
-from models.unet_sa import UNet_linear_conditional
-from train.train_conditional_ddpm import Trainer
+from dataset.preprocessing_md_model2 import CustomDataset_AE_Conditional
+from models.autoencoder import Autoencoder
+from models.unet_sa import UNet_mass_em_conditional
+from train.train_ae_ddpm import Trainer
 
 # Set seed for PyTorch
 torch.manual_seed(42)
@@ -18,7 +19,7 @@ config_name = "default"
 pipe = ConfigPipeline(
     [
         YamlConfig(
-            "./conditional_ddpm_config.yaml", config_name='default', config_folder='cfg/'
+            "./ae_md_cond_ddpm_config.yaml", config_name='default', config_folder='cfg/'
         ),
         ArgparseConfig(infer_types=True, config_name=None, config_file=None),
         YamlConfig(config_folder='cfg/')
@@ -29,11 +30,16 @@ config = pipe.read_conf()
 #print(config.unet.input_channels)
 
 # Load the Dataset
-dataset = CustomDataset_Conditional(folder_path=config.data.folder)
+dataset = CustomDataset_AE_Conditional(root_dir=config.data.folder, max_samples=config.data.max_samples, config=config)
 data_loader = DataLoader(dataset=dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
 
-# Load model
-model = UNet_linear_conditional(config)
+## Load model
+# Auto encoder
+# model_latent = Autoencoder(latent_dim = config.ae.latent_dim, hidden_dim = config.ae.hidden_dim, input_dim =config.ae.input_dim)
+# model_latent.load_state_dict(torch.load('saved_models/ae_log_md_bestmodel.pt'))
+# model_latent = model_latent.to(config.device)
+# Conditional DDPM
+model = UNet_mass_em_conditional(config)
 model = model.to(device=config.device)
 
 # Create Optimizer

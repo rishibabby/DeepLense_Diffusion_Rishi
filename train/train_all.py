@@ -2,7 +2,7 @@ import os
 import torch
 
 from tqdm import tqdm
-from models.ddpm import Diffusion
+from models.ddpm_all import Diffusion
 
 class Trainer:
     def __init__(
@@ -46,13 +46,16 @@ class Trainer:
         for epoch in range(self.n_epochs):
             print(f"Starting epoch {epoch}:")
             pbar = tqdm(data_loader)
-            for i, (images, labels) in enumerate(pbar):
+            for i, (images, v1, v2, v3, v4) in enumerate(pbar):
                 #print(images)
                 images = images.to(self.device)
-                labels = labels.to(self.device)
+                v1 = v1.to(self.device)
+                v2 = v2.to(self.device)
+                v3 = v3.to(self.device)
+                v4 = v4.to(self.device)
                 t = self.diffusion.sample_timesteps(images.shape[0]).to(self.device)
                 x_t, noise = self.diffusion.noise_images(images, t)
-                predicted_noise = self.model(x_t, t, labels)
+                predicted_noise = self.model(x_t, t, v1, v2, v3, v4)
                 loss = mse(noise, predicted_noise)
 
                 optimizer.zero_grad()
@@ -61,9 +64,9 @@ class Trainer:
                 scheduler.step()
 
             if epoch % self.plot_freq == 0: 
-                sampled_images = self.diffusion.sample_conditional(self.model, n=images.shape[0], labels=labels)
-                self.diffusion.save_images(sampled_images, os.path.join("plots", f"conditional_{epoch}.jpg"))
-                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"epochs_1000_conditional_ckpt_model2.pt"))
+                sampled_images = self.diffusion.sample_conditional(self.model, n=images.shape[0], v1=v1, v2=v2, v3=v3, v4=v4)
+                self.diffusion.save_images(sampled_images, os.path.join("plots", f"all_conditional_{epoch}.jpg"))
+                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"all_conditional_ckpt_model2.pt"))
 
             # if epoch % self.eval_freq == 0:
             #     FID_Score = self.diffusion.cal_fid(self.model, data_loader, self.device)

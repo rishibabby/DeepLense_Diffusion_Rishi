@@ -50,6 +50,7 @@ class Trainer:
                 #print(images)
                 images = images.to(self.device)
                 labels = labels.to(self.device)
+                labels = labels.to(torch.float)
                 t = self.diffusion.sample_timesteps(images.shape[0]).to(self.device)
                 x_t, noise = self.diffusion.noise_images(images, t)
                 predicted_noise = self.model(x_t, t, labels)
@@ -62,8 +63,8 @@ class Trainer:
 
             if epoch % self.plot_freq == 0: 
                 sampled_images = self.diffusion.sample_conditional(self.model, n=images.shape[0], labels=labels)
-                self.diffusion.save_images(sampled_images, os.path.join("plots", f"conditional_{epoch}.jpg"))
-                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"epochs_1000_conditional_ckpt_model2.pt"))
+                self.diffusion.save_images(sampled_images, os.path.join("plots", f"mass_em_repeat_conditional_{epoch}.jpg"))
+                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"mass_em_repeat_log_md_conditional_ckpt_model2.pt"))
 
             # if epoch % self.eval_freq == 0:
             #     FID_Score = self.diffusion.cal_fid(self.model, data_loader, self.device)

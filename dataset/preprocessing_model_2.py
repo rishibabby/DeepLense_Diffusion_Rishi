@@ -17,7 +17,8 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         file_name = self.file_list[idx]
         file_path = os.path.join(self.root_dir, file_name)
-        data = np.load(file_path)
+        data = np.load(file_path, allow_pickle=True)
+        data = (data - np.min(data))/(np.max(data)-np.min(data))
         data = torch.from_numpy(data).float()
         data = data.unsqueeze(0)
         if self.transform:
@@ -26,7 +27,7 @@ class CustomDataset(Dataset):
         return data
 
 class CustomDataset_Conditional(Dataset):
-    def __init__(self, folder_path, transforms=None):
+    def __init__(self, folder_path, max_samples=5000, transforms=None):
         self.folder_path = folder_path
         self.class_folders = [f for f in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, f))]
         #print(self.class_folders)
@@ -40,7 +41,9 @@ class CustomDataset_Conditional(Dataset):
         
         for class_folder in self.class_folders:
             class_path = os.path.join(folder_path, class_folder)
+            #print(class_folder)
             file_list = [f for f in os.listdir(class_path) if f.endswith('.npy')]
+            file_list = file_list[:max_samples]
 
             for file_name in file_list:
                 file_path = os.path.join(class_path, file_name)
@@ -48,17 +51,21 @@ class CustomDataset_Conditional(Dataset):
                 if file_name.startswith('axion'):
                     data_point = data_point[0]
                 self.data.append((data_point, class_folder))
+                #print(len(self.data))
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
         data_point, class_name = self.data[idx]
+        #print(class_name)
         label = self.label_encoder.transform([class_name])[0]
+        #print(label)
         
         #data_point = (data_point - np.mean(data_point, axis=(1,2)))/(np.std(data_point, axis=(1,2)))
         
-        # Convert NumPy array to PyTorch tensor
+        # normalise numpy array and convert to PyTorch tensor
+        data_point = (data_point-np.min(data_point))/(np.max(data_point)-np.min(data_point))
         data_point = torch.from_numpy(data_point).float()
         data_point = data_point.unsqueeze(0)
 
@@ -74,4 +81,4 @@ class CustomDataset_Conditional(Dataset):
 if __name__ == '__main__':
     print('hi')
     dataset =  CustomDataset_Conditional('../../Data/Model_II/')
-    print(dataset[0].shape)
+    print(dataset[80000])
