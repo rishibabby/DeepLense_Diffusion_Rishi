@@ -9,7 +9,7 @@ Traditional simulations of gravitational lensing are time-consuming and require 
 # Project Structure
 
 -- cfg      
-    |--- ddpm_config.yaml <- configuration file for DDPM   
+   |--- ddpm_config.yaml <- configuration file for DDPM   
     |--- ae_md_cond_ddpm_config.yaml <- configuration file for using Autoencoder and DDPM   
     |--- ae_md_config.yaml <- configuration file for using Autoencoder and DDPM   
     |--- conditional_ddpm_config <- configuration file for using all variables       
