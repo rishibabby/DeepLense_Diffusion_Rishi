@@ -66,6 +66,10 @@ I have trained a diffusion model using labels as a condition, with the specific 
 
 # Variable Conditional Diffusion model
 
+I have trained a diffusion model conditioned on all astrophysical variables, alongside training a ResNet-18 model using these variables for regression. Following the training, I generated images using the diffusion model and created scatter plots to visualize the relationships between the generated images and the corresponding astrophysical variables. This process allowed me to effectively analyze the performance and correlations of the models based on the generated data. Below I have showed this plot for one astrophysical variable
+
+![alt text](image-1.png)
+
 # Installation and Usage
 
 ```sh
@@ -73,3 +77,9 @@ I have trained a diffusion model using labels as a condition, with the specific 
 git clone git@github.com:rishibabby/DeepLense_Diffusion_Rishi.git
 cd DeepLense_Diffusion_Rishi
 python -m scripts.run_roc
+
+```
+
+# Acknowledgment
+
+I would like to thank my mentors, Pranath Reddy, Dr. Michael Toomey and Prof. Sergei Gleyzer, for their continued support and guidance.
