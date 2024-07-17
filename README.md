@@ -58,3 +58,10 @@ Traditional simulations of gravitational lensing are time-consuming and require 
 </pre>
 
 
+# Class Conditional Diffusion model
+
+I have trained a diffusion model using labels as a condition, with the specific labels being "axion," "cdm," and "no_sub." In addition, I have trained a ResNet model on these same classes. To evaluate the performance, I generated images using the trained diffusion model and then used these images to plot a Receiver Operating Characteristic (ROC) curve. This allowed me to assess the effectiveness of the ResNet model in distinguishing between the different classes based on the generated images.
+
+![alt text](image.png)
+
+# Mass Conditional Diffusion model
