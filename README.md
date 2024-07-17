@@ -70,6 +70,10 @@ I have trained a diffusion model conditioned on all astrophysical variables, alo
 
 ![alt text](image-1.png)
 
+# Requirements
+
+pip install -r requirements.txt
+
 # Installation and Usage
 
 ```sh
