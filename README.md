@@ -9,49 +9,49 @@ Traditional simulations of gravitational lensing are time-consuming and require 
 # Project Structure
 
 -- cfg  
-    |--- ddpm_config.yaml <- configuration file for DDPM  
-    |--- ae_md_cond_ddpm_config.yaml <- configuration file for using Autoencoder and DDPM
-    |--- ae_md_config.yaml <- configuration file for using Autoencoder and DDPM
-    |--- conditional_ddpm_config <- configuration file for using all variables     
--- dataset   
-    |--- preprocessing_model_2.py <- data preprocessing for model 2 . 
-    |--- preprocessing_md_model2.py <- data preprocessing for mass distribution
-    |--- preprocessing_all_model2.py <- data preprocessing for all variables  
--- model  
-    |--- ddpm.py <- diffusion model parameters  
-    |--- unet_sa.py <- unet architecture with self attention   
-    |--- autoencoder.py <- autoencoder architecture
-    |--- clip.py <- clip mechanicm implementation
-    |--- ddpm_all.py <- diffusion model for all variables
-    |--- resnet.py <- resnet18 architecture
-    |--- unet_all <- unet for all variables
-    |--- unnet_sa <- unet for all variables adding variable embedding separetely
--- plots   
-    |--- saving images   
--- saved_models  
-    |--- save trained models   
+    |--- ddpm_config.yaml <- configuration file for DDPM   
+    |--- ae_md_cond_ddpm_config.yaml <- configuration file for using Autoencoder and DDPM   
+    |--- ae_md_config.yaml <- configuration file for using Autoencoder and DDPM   
+    |--- conditional_ddpm_config <- configuration file for using all variables       
+-- dataset     
+    |--- preprocessing_model_2.py <- data preprocessing for model 2   .   
+    |--- preprocessing_md_model2.py <- data preprocessing for mass distribution  
+    |--- preprocessing_all_model2.py <- data preprocessing for all variables    
+-- model    
+    |--- ddpm.py <- diffusion model parameters    
+    |--- unet_sa.py <- unet architecture with self attention     
+    |--- autoencoder.py <- autoencoder architecture  
+    |--- clip.py <- clip mechanicm implementation  
+    |--- ddpm_all.py <- diffusion model for all variables  
+    |--- resnet.py <- resnet18 architecture  
+    |--- unet_all <- unet for all variables  
+    |--- unnet_sa <- unet for all variables adding variable embedding separetely  
+-- plots     
+    |--- saving images     
+-- saved_models    
+    |--- save trained models     
 -- scripts   
-    |--- run_ae_ddpm.py <- script to run autoencoder and ddpm
-    |--- run_ae.py <- script to run autoencoder
-    |--- run_all.py <- script to run ddpm for all variables 
-    |--- run_conditional_ddpm.py <- script to run conditional ddpm 
-    |--- run_ddpm.py <- script to run ddpm 
-    |--- run_fid.py <- script to run fid score
-    |--- run_reg_resnet_all.py <- script to run resnet18 for all variables
-    |--- run_resnet_regression.py <- script to run resnet18 for regression
-    |--- run_resnet.py <- script to run resnet18
-    |--- run_roc.py <- script to run roc plot    
--- train    
-    |--- train_ae_ddpm.py <- training loop for autoencoder and ddpm
-    |--- train_ae.py <- training loop for autoencoder
-    |--- train_all.py <- training loop for all variables
-    |--- train_conditional_ddpm.py <- training loop for conditional ddpm
-    |--- train_ddpm.py <- training loop for ddpm
-    |--- train_resnet.py <- training loop for resnet   
--- utils    
-    |--- test.ipynb <- testing commands  
-    |--- test.py <- 
-    |--- plot_all <- plotting script 
-    |--- plot_ae_ddpm <- plotting script when using autoencoder and ddpm
+    |--- run_ae_ddpm.py <- script to run autoencoder and ddpm  
+    |--- run_ae.py <- script to run autoencoder  
+    |--- run_all.py <- script to run ddpm for all variables   
+    |--- run_conditional_ddpm.py <- script to run conditional ddpm   
+    |--- run_ddpm.py <- script to run ddpm   
+    |--- run_fid.py <- script to run fid score  
+    |--- run_reg_resnet_all.py <- script to run resnet18 for all variables  
+    |--- run_resnet_regression.py <- script to run resnet18 for regression  
+    |--- run_resnet.py <- script to run resnet18  
+    |--- run_roc.py <- script to run roc plot       
+-- train      
+    |--- train_ae_ddpm.py <- training loop for autoencoder and ddpm  
+    |--- train_ae.py <- training loop for autoencoder  
+    |--- train_all.py <- training loop for all variables  
+    |--- train_conditional_ddpm.py <- training loop for conditional ddpm  
+    |--- train_ddpm.py <- training loop for ddpm  
+    |--- train_resnet.py <- training loop for resnet     
+-- utils      
+    |--- test.ipynb <- testing commands    
+    |--- test.py <-   
+    |--- plot_all <- plotting script  
+    |--- plot_ae_ddpm <- plotting script when using autoencoder and ddpm  
 
 
