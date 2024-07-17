@@ -64,4 +64,12 @@ I have trained a diffusion model using labels as a condition, with the specific 
 
 ![alt text](image.png)
 
-# Mass Conditional Diffusion model
+# Variable Conditional Diffusion model
+
+# Installation and Usage
+
+```sh
+
+git clone git@github.com:rishibabby/DeepLense_Diffusion_Rishi.git
+cd DeepLense_Diffusion_Rishi
+python -m scripts.run_roc
