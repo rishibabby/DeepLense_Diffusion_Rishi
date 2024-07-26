@@ -41,7 +41,7 @@ default : &DEFAULT
     train_test_split: 0.9
     plot_freq: 10
     eval_freq: 100
-    shuffle: True
+    shuffle: False
     num_classes: 3
     max: 2.099825382232666
     min: -1.6998486518859863

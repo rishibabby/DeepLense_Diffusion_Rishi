@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from torchvision import models 
 
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_all_model2 import CustomDataset
+from dataset.preprocessing_all_model2 import CustomDataset, CustomDataset_1
 from models.ddpm_all import Diffusion
 from models.autoencoder import Autoencoder
 from models.unet_all import UNet_all_conditional
@@ -63,6 +63,13 @@ diffusion = Diffusion(noise_steps=config.diff.noise_steps, beta_start=config.dif
 dataset = CustomDataset(root_dir=config.data.folder, config=config)#, max_samples=config.data.max_samples, config=config)
 data_loader = DataLoader(dataset=dataset, batch_size=100, shuffle=config.data.shuffle)
 #print(data_loader)
+dataset_1 = CustomDataset_1(root_dir=config.data.folder, config=config)
+data_loader_1 = DataLoader(dataset=dataset_1, batch_size=100, shuffle=config.data.shuffle)
+
+for batch_1 in data_loader_1:
+    data, v1, v2, v3, v4 = batch_1
+    v4_1 = v4.to(config.device).float()
+    break
 
 # For batch data
 for batch in data_loader:
@@ -78,7 +85,6 @@ for batch in data_loader:
     # print(observed_values)
     sample_images = diffusion.sample_conditional(model, 100, v1, v2, v3, v4, cfg_scale=0)
     observed_values = model_res(sample_images)
-
 
     ## Plot for true and predicted
     # fig, axs = plt.subplots(1, 2)
@@ -96,11 +102,11 @@ for batch in data_loader:
     #observed_values = observed_values.to('cpu').detach().numpy()
     #mass = mass*(config.data.max_value-config.data.min_value) + config.data.min_value
     #observed_values = observed_values*(config.data.max_value-config.data.min_value) + config.data.min_value
-    plt.scatter(v4.to('cpu').numpy(), observed_values.to('cpu').detach().numpy(), color='black')
+    plt.scatter(v4_1.to('cpu').numpy(), observed_values.to('cpu').detach().numpy(), color='black')
     #plt.scatter(, observed_values, color='black')
     plt.xlabel('Observed variable 4')
     plt.ylabel('Predicted variable 4')
-    plt.savefig(os.path.join("plots", f"all_nor_variables_4.jpg"))
+    plt.savefig(os.path.join("plots", f"all_nor1_variables_4.jpg"))
     break
 # Load mass and axion 
 # dir = '../Data/Model_II/axion/axion_sim_356113875435765399182650162198846.npy'

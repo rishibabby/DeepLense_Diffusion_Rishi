@@ -44,7 +44,48 @@ class CustomDataset(Dataset):
             data = self.transform(data)
 
         return data_new, v1, v2, v3, v4
-    
+
+
+class CustomDataset_1(Dataset):
+    def __init__(self, root_dir, config, max_samples=10000, transform=None):
+        self.root_dir = root_dir
+        self.transform = transform
+        self.file_list = [f for f in os.listdir(root_dir) if f.endswith('.npy')]
+        self.file_list = self.file_list[:max_samples]
+        self.max_v4 = config.data.max
+        self.min_v4 = config.data.min
+
+    def __len__(self):
+        return len(self.file_list)
+
+    def __getitem__(self, idx):
+        file_name = self.file_list[idx]
+        file_path = os.path.join(self.root_dir, file_name)
+        data = np.load(file_path, allow_pickle=True)
+        data_new = (data[0] - np.min(data[0]))/(np.max(data[0])-np.min(data[0]))
+        v1 = data[1]
+        v2 = data[2]
+        v3 = data[3]
+        v4 = data[4]
+        data_new = torch.from_numpy(data_new).float()
+        data_new = data_new.unsqueeze(0)
+        v1 = torch.tensor(v1).float()
+        v1 = v1.unsqueeze(0)
+        v2 = torch.tensor(v2).float()
+        v2 = v2.unsqueeze(0)
+        v3 = torch.tensor(v3).float()
+        v3 = v3.unsqueeze(0)
+        v4 = torch.tensor(v4).float()
+        ## Normalised
+        v4 = (v4 - self.min_v4)/(self.max_v4-self.min_v4)
+        v4 = v4.unsqueeze(0)
+        #v4 = v4.unsqueeze(0)
+
+        if self.transform:
+            data = self.transform(data)
+
+        return data_new, v1, v2, v3, v4
+
 class CustomDataset_v1(Dataset):
     def __init__(self, root_dir, config, max_samples=10000, transform=None):
         self.root_dir = root_dir
