@@ -3,9 +3,10 @@ import torch
 
 from torch import nn
 from torch.utils.data import DataLoader 
+import torchvision.transforms as Transforms
 
 from configmypy import ConfigPipeline, YamlConfig, ArgparseConfig
-from dataset.preprocessing_model_2 import CustomDataset
+from dataset.preprocessing_ssl import CustomDataset
 from models.unet_sa import UNet
 from train.train_ddpm import Trainer
 
@@ -17,7 +18,7 @@ config_name = "default"
 pipe = ConfigPipeline(
     [
         YamlConfig(
-            "./ddpm_config.yaml", config_name='default', config_folder='cfg/'
+            "./ddpm_ssl_config.yaml", config_name='default', config_folder='cfg/'
         ),
         ArgparseConfig(infer_types=True, config_name=None, config_file=None),
         YamlConfig(config_folder='cfg/')
@@ -28,7 +29,8 @@ config = pipe.read_conf()
 #print(config.unet.input_channels)
 
 # Load the Dataset
-dataset = CustomDataset(root_dir=config.data.folder)
+transforms = Transforms.Compose([Transforms.CenterCrop(config.data.image_size)])
+dataset = CustomDataset(root_dir=config.data.folder, config=config, transform=transforms)
 data_loader = DataLoader(dataset=dataset, batch_size=config.data.batch_size, shuffle=config.data.shuffle)
 
 # Load model

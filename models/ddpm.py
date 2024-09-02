@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from tqdm import tqdm 
 from torchmetrics.image.fid import FrechetInceptionDistance
-from dataset.preprocessing_model_2 import CustomDataset, CustomDataset_Conditional
+#from dataset.preprocessing_model_2 import CustomDataset, CustomDataset_Conditional
 
 class Diffusion:
     def __init__(self, noise_steps=1000, beta_start=1e-4, beta_end=0.02, img_size=128, device="cuda"):

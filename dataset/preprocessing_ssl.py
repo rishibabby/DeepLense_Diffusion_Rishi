@@ -6,11 +6,12 @@ from torch.utils.data import Dataset
 from sklearn.preprocessing import LabelEncoder
 
 class CustomDataset(Dataset):
-    def __init__(self, root_dir, max_samples=10000, transform=None):
+    def __init__(self, root_dir, config, transform=None):
         self.root_dir = root_dir
         self.transform = transform
         self.file_list = [f for f in os.listdir(root_dir) if f.endswith('.npy')]
-        self.file_list = self.file_list[:max_samples]
+        self.mean = config.data.mean
+        self.std = config.data.std
 
     def __len__(self):
         return len(self.file_list)
@@ -19,9 +20,13 @@ class CustomDataset(Dataset):
         file_name = self.file_list[idx]
         file_path = os.path.join(self.root_dir, file_name)
         data = np.load(file_path, allow_pickle=True)
-        data = (data - np.min(data))/(np.max(data)-np.min(data))
+        #data = (data - np.min(data))/(np.max(data)-np.min(data))
+        # Normalize each channel separately
+        for i in range(3):
+            data[i, :, :] = (data[i, :, :] - self.mean[i]) / self.std[i]
         data = torch.from_numpy(data).float()
-        data = data.unsqueeze(0)
+        #data = data.unsqueeze(0)
+        #print(data.shape)
         if self.transform:
             data = self.transform(data)
 

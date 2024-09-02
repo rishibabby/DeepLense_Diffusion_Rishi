@@ -7,3 +7,7 @@ class VisionTransformer(nn.Module):
         super().__init__()
         self.input_resolution = input_resolution
         
+
+
+# Encoder for astro physical variables
+class 

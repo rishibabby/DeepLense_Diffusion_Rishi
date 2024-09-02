@@ -49,8 +49,11 @@ class Trainer:
             for i, (images) in enumerate(pbar):
                 
                 images = images.to(self.device)
+                #print(images.shape)
                 t = self.diffusion.sample_timesteps(images.shape[0]).to(self.device)
                 x_t, noise = self.diffusion.noise_images(images, t)
+                #print(x_t.shape)
+                #print(t.shape)
                 predicted_noise = self.model(x_t, t)
                 loss = mse(noise, predicted_noise)
 
@@ -61,8 +64,8 @@ class Trainer:
 
             if epoch % self.plot_freq == 0: 
                 sampled_images = self.diffusion.sample(self.model, n=images.shape[0])
-                self.diffusion.save_images(sampled_images, os.path.join("plots", f"{epoch}.jpg"))
-                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"ckpt_model2.pt"))
+                self.diffusion.save_images(sampled_images, os.path.join("plots", f"new_ssl_non_lenses_{epoch}.jpg"))
+                torch.save(self.model.state_dict(), os.path.join("saved_models",  f"new_ssl_ddpm_non_lenses_mean.pt"))
 
             if epoch % self.eval_freq == 0:
                 FID_Score = self.diffusion.cal_fid(self.model, data_loader, self.device)

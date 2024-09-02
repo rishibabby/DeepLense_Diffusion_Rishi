@@ -195,6 +195,7 @@ class UNet(nn.Module):
         return pos_enc
 
     def unet_forwad(self, x, t):
+        #print(x.shape)
         x1 = self.inc(x)
         x2 = self.down1(x1, t)
         x2 = self.sa1(x2)
